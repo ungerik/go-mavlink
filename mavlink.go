@@ -96,6 +96,10 @@ func Receive(reader io.Reader) (msg Message, systemID, componentID uint8, err er
 	}
 
 	msg = messageFactory[header.MessageID]()
+	if header.PayloadLength != msg.Size() {
+		return nil, 0, 0, fmt.Errorf("Message ID and size don't match")
+	}
+
 	err = binary.Read(teeReader, binary.LittleEndian, msg)
 	if err != nil {
 		return nil, 0, 0, err
