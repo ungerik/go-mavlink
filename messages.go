@@ -103,533 +103,495 @@ var messageFactory = map[uint8]newMessageFunc{
 
 
 // Micro air vehicle / autopilot classes. This identifies the individual model.
-type MavAutopilot byte
-
 const (
 	// Generic autopilot, full support for everything
-	MAV_AUTOPILOT_GENERIC MavAutopilot = 0
+	MAV_AUTOPILOT_GENERIC = 0
 	// PIXHAWK autopilot, http://pixhawk.ethz.ch
-	MAV_AUTOPILOT_PIXHAWK MavAutopilot = 1
+	MAV_AUTOPILOT_PIXHAWK = 1
 	// SLUGS autopilot, http://slugsuav.soe.ucsc.edu
-	MAV_AUTOPILOT_SLUGS MavAutopilot = 2
+	MAV_AUTOPILOT_SLUGS = 2
 	// ArduPilotMega / ArduCopter, http://diydrones.com
-	MAV_AUTOPILOT_ARDUPILOTMEGA MavAutopilot = 3
+	MAV_AUTOPILOT_ARDUPILOTMEGA = 3
 	// OpenPilot, http://openpilot.org
-	MAV_AUTOPILOT_OPENPILOT MavAutopilot = 4
+	MAV_AUTOPILOT_OPENPILOT = 4
 	// Generic autopilot only supporting simple waypoints
-	MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY MavAutopilot = 5
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY = 5
 	// Generic autopilot supporting waypoints and other simple navigation commands
-	MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY MavAutopilot = 6
+	MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY = 6
 	// Generic autopilot supporting the full mission command set
-	MAV_AUTOPILOT_GENERIC_MISSION_FULL MavAutopilot = 7
+	MAV_AUTOPILOT_GENERIC_MISSION_FULL = 7
 	// No valid autopilot, e.g. a GCS or other MAVLink component
-	MAV_AUTOPILOT_INVALID MavAutopilot = 8
+	MAV_AUTOPILOT_INVALID = 8
 	// PPZ UAV - http://nongnu.org/paparazzi
-	MAV_AUTOPILOT_PPZ MavAutopilot = 9
+	MAV_AUTOPILOT_PPZ = 9
 	// UAV Dev Board
-	MAV_AUTOPILOT_UDB MavAutopilot = 10
+	MAV_AUTOPILOT_UDB = 10
 	// FlexiPilot
-	MAV_AUTOPILOT_FP MavAutopilot = 11
+	MAV_AUTOPILOT_FP = 11
 	// PX4 Autopilot - http://pixhawk.ethz.ch/px4/
-	MAV_AUTOPILOT_PX4 MavAutopilot = 12
+	MAV_AUTOPILOT_PX4 = 12
 	// SMACCMPilot - http://smaccmpilot.org
-	MAV_AUTOPILOT_SMACCMPILOT MavAutopilot = 13
+	MAV_AUTOPILOT_SMACCMPILOT = 13
 	// AutoQuad -- http://autoquad.org
-	MAV_AUTOPILOT_AUTOQUAD MavAutopilot = 14
+	MAV_AUTOPILOT_AUTOQUAD = 14
 	// Armazila -- http://armazila.com
-	MAV_AUTOPILOT_ARMAZILA MavAutopilot = 15
+	MAV_AUTOPILOT_ARMAZILA = 15
 	// Aerob -- http://aerob.ru
-	MAV_AUTOPILOT_AEROB MavAutopilot = 16
+	MAV_AUTOPILOT_AEROB = 16
 )
-
-type MavType byte
 
 const (
 	// Generic micro air vehicle.
-	MAV_TYPE_GENERIC MavType = 0
+	MAV_TYPE_GENERIC = 0
 	// Fixed wing aircraft.
-	MAV_TYPE_FIXED_WING MavType = 1
+	MAV_TYPE_FIXED_WING = 1
 	// Quadrotor
-	MAV_TYPE_QUADROTOR MavType = 2
+	MAV_TYPE_QUADROTOR = 2
 	// Coaxial helicopter
-	MAV_TYPE_COAXIAL MavType = 3
+	MAV_TYPE_COAXIAL = 3
 	// Normal helicopter with tail rotor.
-	MAV_TYPE_HELICOPTER MavType = 4
+	MAV_TYPE_HELICOPTER = 4
 	// Ground installation
-	MAV_TYPE_ANTENNA_TRACKER MavType = 5
+	MAV_TYPE_ANTENNA_TRACKER = 5
 	// Operator control unit / ground control station
-	MAV_TYPE_GCS MavType = 6
+	MAV_TYPE_GCS = 6
 	// Airship, controlled
-	MAV_TYPE_AIRSHIP MavType = 7
+	MAV_TYPE_AIRSHIP = 7
 	// Free balloon, uncontrolled
-	MAV_TYPE_FREE_BALLOON MavType = 8
+	MAV_TYPE_FREE_BALLOON = 8
 	// Rocket
-	MAV_TYPE_ROCKET MavType = 9
+	MAV_TYPE_ROCKET = 9
 	// Ground rover
-	MAV_TYPE_GROUND_ROVER MavType = 10
+	MAV_TYPE_GROUND_ROVER = 10
 	// Surface vessel, boat, ship
-	MAV_TYPE_SURFACE_BOAT MavType = 11
+	MAV_TYPE_SURFACE_BOAT = 11
 	// Submarine
-	MAV_TYPE_SUBMARINE MavType = 12
+	MAV_TYPE_SUBMARINE = 12
 	// Hexarotor
-	MAV_TYPE_HEXAROTOR MavType = 13
+	MAV_TYPE_HEXAROTOR = 13
 	// Octorotor
-	MAV_TYPE_OCTOROTOR MavType = 14
+	MAV_TYPE_OCTOROTOR = 14
 	// Octorotor
-	MAV_TYPE_TRICOPTER MavType = 15
+	MAV_TYPE_TRICOPTER = 15
 	// Flapping wing
-	MAV_TYPE_FLAPPING_WING MavType = 16
+	MAV_TYPE_FLAPPING_WING = 16
 	// Flapping wing
-	MAV_TYPE_KITE MavType = 17
+	MAV_TYPE_KITE = 17
 )
 
 // These flags encode the MAV mode.
-type MavModeFlag byte
-
 const (
 	// 0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly.
-	MAV_MODE_FLAG_SAFETY_ARMED MavModeFlag = 128
+	MAV_MODE_FLAG_SAFETY_ARMED = 128
 	// 0b01000000 remote control input is enabled.
-	MAV_MODE_FLAG_MANUAL_INPUT_ENABLED MavModeFlag = 64
+	MAV_MODE_FLAG_MANUAL_INPUT_ENABLED = 64
 	// 0b00100000 hardware in the loop simulation. All motors / actuators are blocked, but internal software is full operational.
-	MAV_MODE_FLAG_HIL_ENABLED MavModeFlag = 32
+	MAV_MODE_FLAG_HIL_ENABLED = 32
 	// 0b00010000 system stabilizes electronically its attitude (and optionally position). It needs however further control inputs to move around.
-	MAV_MODE_FLAG_STABILIZE_ENABLED MavModeFlag = 16
+	MAV_MODE_FLAG_STABILIZE_ENABLED = 16
 	// 0b00001000 guided mode enabled, system flies MISSIONs / mission items.
-	MAV_MODE_FLAG_GUIDED_ENABLED MavModeFlag = 8
+	MAV_MODE_FLAG_GUIDED_ENABLED = 8
 	// 0b00000100 autonomous mode enabled, system finds its own goal positions. Guided flag can be set or not, depends on the actual implementation.
-	MAV_MODE_FLAG_AUTO_ENABLED MavModeFlag = 4
+	MAV_MODE_FLAG_AUTO_ENABLED = 4
 	// 0b00000010 system has a test mode enabled. This flag is intended for temporary system tests and should not be used for stable implementations.
-	MAV_MODE_FLAG_TEST_ENABLED MavModeFlag = 2
+	MAV_MODE_FLAG_TEST_ENABLED = 2
 	// 0b00000001 Reserved for future use.
-	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED MavModeFlag = 1
+	MAV_MODE_FLAG_CUSTOM_MODE_ENABLED = 1
 )
 
 // These values encode the bit positions of the decode position. These values can be used to read the value of a flag bit by combining the base_mode variable with AND with the flag position value. The result will be either 0 or 1, depending on if the flag is set or not.
-type MavModeFlagDecodePosition byte
-
 const (
 	// First bit:  10000000
-	MAV_MODE_FLAG_DECODE_POSITION_SAFETY MavModeFlagDecodePosition = 128
+	MAV_MODE_FLAG_DECODE_POSITION_SAFETY = 128
 	// Second bit: 01000000
-	MAV_MODE_FLAG_DECODE_POSITION_MANUAL MavModeFlagDecodePosition = 64
+	MAV_MODE_FLAG_DECODE_POSITION_MANUAL = 64
 	// Third bit:  00100000
-	MAV_MODE_FLAG_DECODE_POSITION_HIL MavModeFlagDecodePosition = 32
+	MAV_MODE_FLAG_DECODE_POSITION_HIL = 32
 	// Fourth bit: 00010000
-	MAV_MODE_FLAG_DECODE_POSITION_STABILIZE MavModeFlagDecodePosition = 16
+	MAV_MODE_FLAG_DECODE_POSITION_STABILIZE = 16
 	// Fifth bit:  00001000
-	MAV_MODE_FLAG_DECODE_POSITION_GUIDED MavModeFlagDecodePosition = 8
+	MAV_MODE_FLAG_DECODE_POSITION_GUIDED = 8
 	// Sixt bit:   00000100
-	MAV_MODE_FLAG_DECODE_POSITION_AUTO MavModeFlagDecodePosition = 4
+	MAV_MODE_FLAG_DECODE_POSITION_AUTO = 4
 	// Seventh bit: 00000010
-	MAV_MODE_FLAG_DECODE_POSITION_TEST MavModeFlagDecodePosition = 2
+	MAV_MODE_FLAG_DECODE_POSITION_TEST = 2
 	// Eighth bit: 00000001
-	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE MavModeFlagDecodePosition = 1
+	MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE = 1
 )
 
 // Override command, pauses current mission execution and moves immediately to a position
-type MavGoto byte
-
 const (
 	// Hold at the current position.
-	MAV_GOTO_DO_HOLD MavGoto = 0
+	MAV_GOTO_DO_HOLD = 0
 	// Continue with the next item in mission execution.
-	MAV_GOTO_DO_CONTINUE MavGoto = 1
+	MAV_GOTO_DO_CONTINUE = 1
 	// Hold at the current position of the system
-	MAV_GOTO_HOLD_AT_CURRENT_POSITION MavGoto = 2
+	MAV_GOTO_HOLD_AT_CURRENT_POSITION = 2
 	// Hold at the position specified in the parameters of the DO_HOLD action
-	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION MavGoto = 3
+	MAV_GOTO_HOLD_AT_SPECIFIED_POSITION = 3
 )
 
 // These defines are predefined OR-combined mode flags. There is no need to use values from this enum, but it
 //                simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.
-type MavMode byte
-
 const (
 	// System is not ready to fly, booting, calibrating, etc. No flag is set.
-	MAV_MODE_PREFLIGHT MavMode = 0
+	MAV_MODE_PREFLIGHT = 0
 	// System is allowed to be active, under assisted RC control.
-	MAV_MODE_STABILIZE_DISARMED MavMode = 80
+	MAV_MODE_STABILIZE_DISARMED = 80
 	// System is allowed to be active, under assisted RC control.
-	MAV_MODE_STABILIZE_ARMED MavMode = 208
+	MAV_MODE_STABILIZE_ARMED = 208
 	// System is allowed to be active, under manual (RC) control, no stabilization
-	MAV_MODE_MANUAL_DISARMED MavMode = 64
+	MAV_MODE_MANUAL_DISARMED = 64
 	// System is allowed to be active, under manual (RC) control, no stabilization
-	MAV_MODE_MANUAL_ARMED MavMode = 192
+	MAV_MODE_MANUAL_ARMED = 192
 	// System is allowed to be active, under autonomous control, manual setpoint
-	MAV_MODE_GUIDED_DISARMED MavMode = 88
+	MAV_MODE_GUIDED_DISARMED = 88
 	// System is allowed to be active, under autonomous control, manual setpoint
-	MAV_MODE_GUIDED_ARMED MavMode = 216
+	MAV_MODE_GUIDED_ARMED = 216
 	// System is allowed to be active, under autonomous control and navigation (the trajectory is decided onboard and not pre-programmed by MISSIONs)
-	MAV_MODE_AUTO_DISARMED MavMode = 92
+	MAV_MODE_AUTO_DISARMED = 92
 	// System is allowed to be active, under autonomous control and navigation (the trajectory is decided onboard and not pre-programmed by MISSIONs)
-	MAV_MODE_AUTO_ARMED MavMode = 220
+	MAV_MODE_AUTO_ARMED = 220
 	// UNDEFINED mode. This solely depends on the autopilot - use with caution, intended for developers only.
-	MAV_MODE_TEST_DISARMED MavMode = 66
+	MAV_MODE_TEST_DISARMED = 66
 	// UNDEFINED mode. This solely depends on the autopilot - use with caution, intended for developers only.
-	MAV_MODE_TEST_ARMED MavMode = 194
+	MAV_MODE_TEST_ARMED = 194
 )
-
-type MavState byte
 
 const (
 	// Uninitialized system, state is unknown.
-	MAV_STATE_UNINIT MavState = 0
+	MAV_STATE_UNINIT = 0
 	// System is booting up.
-	MAV_STATE_BOOT MavState
+	MAV_STATE_BOOT = 1
 	// System is calibrating and not flight-ready.
-	MAV_STATE_CALIBRATING MavState
+	MAV_STATE_CALIBRATING = 2
 	// System is grounded and on standby. It can be launched any time.
-	MAV_STATE_STANDBY MavState
+	MAV_STATE_STANDBY = 3
 	// System is active and might be already airborne. Motors are engaged.
-	MAV_STATE_ACTIVE MavState
+	MAV_STATE_ACTIVE = 4
 	// System is in a non-normal flight mode. It can however still navigate.
-	MAV_STATE_CRITICAL MavState
+	MAV_STATE_CRITICAL = 5
 	// System is in a non-normal flight mode. It lost control over parts or over the whole airframe. It is in mayday and going down.
-	MAV_STATE_EMERGENCY MavState
+	MAV_STATE_EMERGENCY = 6
 	// System just initialized its power-down sequence, will shut down now.
-	MAV_STATE_POWEROFF MavState
+	MAV_STATE_POWEROFF = 7
 )
 
-type MavComponent byte
-
 const (
-	MAV_COMP_ID_ALL MavComponent = 0
-	MAV_COMP_ID_GPS MavComponent = 220
-	MAV_COMP_ID_MISSIONPLANNER MavComponent = 190
-	MAV_COMP_ID_PATHPLANNER MavComponent = 195
-	MAV_COMP_ID_MAPPER MavComponent = 180
-	MAV_COMP_ID_CAMERA MavComponent = 100
-	MAV_COMP_ID_IMU MavComponent = 200
-	MAV_COMP_ID_IMU_2 MavComponent = 201
-	MAV_COMP_ID_IMU_3 MavComponent = 202
-	MAV_COMP_ID_UDP_BRIDGE MavComponent = 240
-	MAV_COMP_ID_UART_BRIDGE MavComponent = 241
-	MAV_COMP_ID_SYSTEM_CONTROL MavComponent = 250
-	MAV_COMP_ID_SERVO1 MavComponent = 140
-	MAV_COMP_ID_SERVO2 MavComponent = 141
-	MAV_COMP_ID_SERVO3 MavComponent = 142
-	MAV_COMP_ID_SERVO4 MavComponent = 143
-	MAV_COMP_ID_SERVO5 MavComponent = 144
-	MAV_COMP_ID_SERVO6 MavComponent = 145
-	MAV_COMP_ID_SERVO7 MavComponent = 146
-	MAV_COMP_ID_SERVO8 MavComponent = 147
-	MAV_COMP_ID_SERVO9 MavComponent = 148
-	MAV_COMP_ID_SERVO10 MavComponent = 149
-	MAV_COMP_ID_SERVO11 MavComponent = 150
-	MAV_COMP_ID_SERVO12 MavComponent = 151
-	MAV_COMP_ID_SERVO13 MavComponent = 152
-	MAV_COMP_ID_SERVO14 MavComponent = 153
+	MAV_COMP_ID_ALL = 0
+	MAV_COMP_ID_GPS = 220
+	MAV_COMP_ID_MISSIONPLANNER = 190
+	MAV_COMP_ID_PATHPLANNER = 195
+	MAV_COMP_ID_MAPPER = 180
+	MAV_COMP_ID_CAMERA = 100
+	MAV_COMP_ID_IMU = 200
+	MAV_COMP_ID_IMU_2 = 201
+	MAV_COMP_ID_IMU_3 = 202
+	MAV_COMP_ID_UDP_BRIDGE = 240
+	MAV_COMP_ID_UART_BRIDGE = 241
+	MAV_COMP_ID_SYSTEM_CONTROL = 250
+	MAV_COMP_ID_SERVO1 = 140
+	MAV_COMP_ID_SERVO2 = 141
+	MAV_COMP_ID_SERVO3 = 142
+	MAV_COMP_ID_SERVO4 = 143
+	MAV_COMP_ID_SERVO5 = 144
+	MAV_COMP_ID_SERVO6 = 145
+	MAV_COMP_ID_SERVO7 = 146
+	MAV_COMP_ID_SERVO8 = 147
+	MAV_COMP_ID_SERVO9 = 148
+	MAV_COMP_ID_SERVO10 = 149
+	MAV_COMP_ID_SERVO11 = 150
+	MAV_COMP_ID_SERVO12 = 151
+	MAV_COMP_ID_SERVO13 = 152
+	MAV_COMP_ID_SERVO14 = 153
 )
 
 // These encode the sensors whose status is sent as part of the SYS_STATUS message.
-type MavSysStatusSensor byte
-
 const (
 	// 0x01 3D gyro
-	MAV_SYS_STATUS_SENSOR_3D_GYRO MavSysStatusSensor = 1
+	MAV_SYS_STATUS_SENSOR_3D_GYRO = 1
 	// 0x02 3D accelerometer
-	MAV_SYS_STATUS_SENSOR_3D_ACCEL MavSysStatusSensor = 2
+	MAV_SYS_STATUS_SENSOR_3D_ACCEL = 2
 	// 0x04 3D magnetometer
-	MAV_SYS_STATUS_SENSOR_3D_MAG MavSysStatusSensor = 4
+	MAV_SYS_STATUS_SENSOR_3D_MAG = 4
 	// 0x08 absolute pressure
-	MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE MavSysStatusSensor = 8
+	MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE = 8
 	// 0x10 differential pressure
-	MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE MavSysStatusSensor = 16
+	MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE = 16
 	// 0x20 GPS
-	MAV_SYS_STATUS_SENSOR_GPS MavSysStatusSensor = 32
+	MAV_SYS_STATUS_SENSOR_GPS = 32
 	// 0x40 optical flow
-	MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW MavSysStatusSensor = 64
+	MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW = 64
 	// 0x80 computer vision position
-	MAV_SYS_STATUS_SENSOR_VISION_POSITION MavSysStatusSensor = 128
+	MAV_SYS_STATUS_SENSOR_VISION_POSITION = 128
 	// 0x100 laser based position
-	MAV_SYS_STATUS_SENSOR_LASER_POSITION MavSysStatusSensor = 256
+	MAV_SYS_STATUS_SENSOR_LASER_POSITION = 256
 	// 0x200 external ground truth (Vicon or Leica)
-	MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH MavSysStatusSensor = 512
+	MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH = 512
 	// 0x400 3D angular rate control
-	MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL MavSysStatusSensor = 1024
+	MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL = 1024
 	// 0x800 attitude stabilization
-	MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION MavSysStatusSensor = 2048
+	MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION = 2048
 	// 0x1000 yaw position
-	MAV_SYS_STATUS_SENSOR_YAW_POSITION MavSysStatusSensor = 4096
+	MAV_SYS_STATUS_SENSOR_YAW_POSITION = 4096
 	// 0x2000 z/altitude control
-	MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL MavSysStatusSensor = 8192
+	MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL = 8192
 	// 0x4000 x/y position control
-	MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL MavSysStatusSensor = 16384
+	MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL = 16384
 	// 0x8000 motor outputs / control
-	MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS MavSysStatusSensor = 32768
+	MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS = 32768
 	// 0x10000 rc receiver
-	MAV_SYS_STATUS_SENSOR_RC_RECEIVER MavSysStatusSensor = 65536
+	MAV_SYS_STATUS_SENSOR_RC_RECEIVER = 65536
 )
-
-type MavFrame byte
 
 const (
 	// Global coordinate frame, WGS84 coordinate system. First value / x: latitude, second value / y: longitude, third value / z: positive altitude over mean sea level (MSL)
-	MAV_FRAME_GLOBAL MavFrame = 0
+	MAV_FRAME_GLOBAL = 0
 	// Local coordinate frame, Z-up (x: north, y: east, z: down).
-	MAV_FRAME_LOCAL_NED MavFrame = 1
+	MAV_FRAME_LOCAL_NED = 1
 	// NOT a coordinate frame, indicates a mission command.
-	MAV_FRAME_MISSION MavFrame = 2
+	MAV_FRAME_MISSION = 2
 	// Global coordinate frame, WGS84 coordinate system, relative altitude over ground with respect to the home position. First value / x: latitude, second value / y: longitude, third value / z: positive altitude with 0 being at the altitude of the home location.
-	MAV_FRAME_GLOBAL_RELATIVE_ALT MavFrame = 3
+	MAV_FRAME_GLOBAL_RELATIVE_ALT = 3
 	// Local coordinate frame, Z-down (x: east, y: north, z: up)
-	MAV_FRAME_LOCAL_ENU MavFrame = 4
+	MAV_FRAME_LOCAL_ENU = 4
 )
 
-type MavlinkDataStreamType byte
-
 const (
-	MAVLINK_DATA_STREAM_IMG_JPEG MavlinkDataStreamType = iota
-	MAVLINK_DATA_STREAM_IMG_BMP MavlinkDataStreamType
-	MAVLINK_DATA_STREAM_IMG_RAW8U MavlinkDataStreamType
-	MAVLINK_DATA_STREAM_IMG_RAW32U MavlinkDataStreamType
-	MAVLINK_DATA_STREAM_IMG_PGM MavlinkDataStreamType
-	MAVLINK_DATA_STREAM_IMG_PNG MavlinkDataStreamType
+	MAVLINK_DATA_STREAM_IMG_JPEG = iota
+	MAVLINK_DATA_STREAM_IMG_BMP
+	MAVLINK_DATA_STREAM_IMG_RAW8U
+	MAVLINK_DATA_STREAM_IMG_RAW32U
+	MAVLINK_DATA_STREAM_IMG_PGM
+	MAVLINK_DATA_STREAM_IMG_PNG
 )
 
 // Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data.
-type MavCmd byte
-
 const (
 	// Navigate to MISSION.
-	MAV_CMD_NAV_WAYPOINT MavCmd = 16
+	MAV_CMD_NAV_WAYPOINT = 16
 	// Loiter around this MISSION an unlimited amount of time
-	MAV_CMD_NAV_LOITER_UNLIM MavCmd = 17
+	MAV_CMD_NAV_LOITER_UNLIM = 17
 	// Loiter around this MISSION for X turns
-	MAV_CMD_NAV_LOITER_TURNS MavCmd = 18
+	MAV_CMD_NAV_LOITER_TURNS = 18
 	// Loiter around this MISSION for X seconds
-	MAV_CMD_NAV_LOITER_TIME MavCmd = 19
+	MAV_CMD_NAV_LOITER_TIME = 19
 	// Return to launch location
-	MAV_CMD_NAV_RETURN_TO_LAUNCH MavCmd = 20
+	MAV_CMD_NAV_RETURN_TO_LAUNCH = 20
 	// Land at location
-	MAV_CMD_NAV_LAND MavCmd = 21
+	MAV_CMD_NAV_LAND = 21
 	// Takeoff from ground / hand
-	MAV_CMD_NAV_TAKEOFF MavCmd = 22
+	MAV_CMD_NAV_TAKEOFF = 22
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicles control system to control the vehicle attitude and the attitude of various sensors such as cameras.
-	MAV_CMD_NAV_ROI MavCmd = 80
+	MAV_CMD_NAV_ROI = 80
 	// Control autonomous path planning on the MAV.
-	MAV_CMD_NAV_PATHPLANNING MavCmd = 81
+	MAV_CMD_NAV_PATHPLANNING = 81
 	// NOP - This command is only used to mark the upper limit of the NAV/ACTION commands in the enumeration
-	MAV_CMD_NAV_LAST MavCmd = 95
+	MAV_CMD_NAV_LAST = 95
 	// Delay mission state machine.
-	MAV_CMD_CONDITION_DELAY MavCmd = 112
+	MAV_CMD_CONDITION_DELAY = 112
 	// Ascend/descend at rate.  Delay mission state machine until desired altitude reached.
-	MAV_CMD_CONDITION_CHANGE_ALT MavCmd = 113
+	MAV_CMD_CONDITION_CHANGE_ALT = 113
 	// Delay mission state machine until within desired distance of next NAV point.
-	MAV_CMD_CONDITION_DISTANCE MavCmd = 114
+	MAV_CMD_CONDITION_DISTANCE = 114
 	// Reach a certain target angle.
-	MAV_CMD_CONDITION_YAW MavCmd = 115
+	MAV_CMD_CONDITION_YAW = 115
 	// NOP - This command is only used to mark the upper limit of the CONDITION commands in the enumeration
-	MAV_CMD_CONDITION_LAST MavCmd = 159
+	MAV_CMD_CONDITION_LAST = 159
 	// Set system mode.
-	MAV_CMD_DO_SET_MODE MavCmd = 176
+	MAV_CMD_DO_SET_MODE = 176
 	// Jump to the desired command in the mission list.  Repeat this action only the specified number of times
-	MAV_CMD_DO_JUMP MavCmd = 177
+	MAV_CMD_DO_JUMP = 177
 	// Change speed and/or throttle set points.
-	MAV_CMD_DO_CHANGE_SPEED MavCmd = 178
+	MAV_CMD_DO_CHANGE_SPEED = 178
 	// Changes the home location either to the current location or a specified location.
-	MAV_CMD_DO_SET_HOME MavCmd = 179
+	MAV_CMD_DO_SET_HOME = 179
 	// Set a system parameter.  Caution!  Use of this command requires knowledge of the numeric enumeration value of the parameter.
-	MAV_CMD_DO_SET_PARAMETER MavCmd = 180
+	MAV_CMD_DO_SET_PARAMETER = 180
 	// Set a relay to a condition.
-	MAV_CMD_DO_SET_RELAY MavCmd = 181
+	MAV_CMD_DO_SET_RELAY = 181
 	// Cycle a relay on and off for a desired number of cyles with a desired period.
-	MAV_CMD_DO_REPEAT_RELAY MavCmd = 182
+	MAV_CMD_DO_REPEAT_RELAY = 182
 	// Set a servo to a desired PWM value.
-	MAV_CMD_DO_SET_SERVO MavCmd = 183
+	MAV_CMD_DO_SET_SERVO = 183
 	// Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period.
-	MAV_CMD_DO_REPEAT_SERVO MavCmd = 184
+	MAV_CMD_DO_REPEAT_SERVO = 184
 	// Control onboard camera system.
-	MAV_CMD_DO_CONTROL_VIDEO MavCmd = 200
+	MAV_CMD_DO_CONTROL_VIDEO = 200
 	// Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicles control system to control the vehicle attitude and the attitude of various sensors such as cameras.
-	MAV_CMD_DO_SET_ROI MavCmd = 201
+	MAV_CMD_DO_SET_ROI = 201
 	// NOP - This command is only used to mark the upper limit of the DO commands in the enumeration
-	MAV_CMD_DO_LAST MavCmd = 240
+	MAV_CMD_DO_LAST = 240
 	// Trigger calibration. This command will be only accepted if in pre-flight mode.
-	MAV_CMD_PREFLIGHT_CALIBRATION MavCmd = 241
+	MAV_CMD_PREFLIGHT_CALIBRATION = 241
 	// Set sensor offsets. This command will be only accepted if in pre-flight mode.
-	MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS MavCmd = 242
+	MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS = 242
 	// Request storage of different parameter values and logs. This command will be only accepted if in pre-flight mode.
-	MAV_CMD_PREFLIGHT_STORAGE MavCmd = 245
+	MAV_CMD_PREFLIGHT_STORAGE = 245
 	// Request the reboot or shutdown of system components.
-	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN MavCmd = 246
+	MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN = 246
 	// Hold / continue the current action
-	MAV_CMD_OVERRIDE_GOTO MavCmd = 252
+	MAV_CMD_OVERRIDE_GOTO = 252
 	// start running a mission
-	MAV_CMD_MISSION_START MavCmd = 300
+	MAV_CMD_MISSION_START = 300
 	// Arms / Disarms a component
-	MAV_CMD_COMPONENT_ARM_DISARM MavCmd = 400
+	MAV_CMD_COMPONENT_ARM_DISARM = 400
 	// Starts receiver pairing
-	MAV_CMD_START_RX_PAIR MavCmd = 500
+	MAV_CMD_START_RX_PAIR = 500
 )
 
 // Data stream IDs. A data stream is not a fixed set of messages, but rather a
 //      recommendation to the autopilot software. Individual autopilots may or may not obey
 //      the recommended messages.
-type MavDataStream byte
-
 const (
 	// Enable all data streams
-	MAV_DATA_STREAM_ALL MavDataStream = 0
+	MAV_DATA_STREAM_ALL = 0
 	// Enable IMU_RAW, GPS_RAW, GPS_STATUS packets.
-	MAV_DATA_STREAM_RAW_SENSORS MavDataStream = 1
+	MAV_DATA_STREAM_RAW_SENSORS = 1
 	// Enable GPS_STATUS, CONTROL_STATUS, AUX_STATUS
-	MAV_DATA_STREAM_EXTENDED_STATUS MavDataStream = 2
+	MAV_DATA_STREAM_EXTENDED_STATUS = 2
 	// Enable RC_CHANNELS_SCALED, RC_CHANNELS_RAW, SERVO_OUTPUT_RAW
-	MAV_DATA_STREAM_RC_CHANNELS MavDataStream = 3
+	MAV_DATA_STREAM_RC_CHANNELS = 3
 	// Enable ATTITUDE_CONTROLLER_OUTPUT, POSITION_CONTROLLER_OUTPUT, NAV_CONTROLLER_OUTPUT.
-	MAV_DATA_STREAM_RAW_CONTROLLER MavDataStream = 4
+	MAV_DATA_STREAM_RAW_CONTROLLER = 4
 	// Enable LOCAL_POSITION, GLOBAL_POSITION/GLOBAL_POSITION_INT messages.
-	MAV_DATA_STREAM_POSITION MavDataStream = 6
+	MAV_DATA_STREAM_POSITION = 6
 	// Dependent on the autopilot
-	MAV_DATA_STREAM_EXTRA1 MavDataStream = 10
+	MAV_DATA_STREAM_EXTRA1 = 10
 	// Dependent on the autopilot
-	MAV_DATA_STREAM_EXTRA2 MavDataStream = 11
+	MAV_DATA_STREAM_EXTRA2 = 11
 	// Dependent on the autopilot
-	MAV_DATA_STREAM_EXTRA3 MavDataStream = 12
+	MAV_DATA_STREAM_EXTRA3 = 12
 )
 
 //  The ROI (region of interest) for the vehicle. This can be
 //                 be used by the vehicle for camera/vehicle attitude alignment (see
 //                 MAV_CMD_NAV_ROI).
-type MavRoi byte
-
 const (
 	// No region of interest.
-	MAV_ROI_NONE MavRoi = 0
+	MAV_ROI_NONE = 0
 	// Point toward next MISSION.
-	MAV_ROI_WPNEXT MavRoi = 1
+	MAV_ROI_WPNEXT = 1
 	// Point toward given MISSION.
-	MAV_ROI_WPINDEX MavRoi = 2
+	MAV_ROI_WPINDEX = 2
 	// Point toward fixed location.
-	MAV_ROI_LOCATION MavRoi = 3
+	MAV_ROI_LOCATION = 3
 	// Point toward of given id.
-	MAV_ROI_TARGET MavRoi = 4
+	MAV_ROI_TARGET = 4
 )
 
 // ACK / NACK / ERROR values as a result of MAV_CMDs and for mission item transmission.
-type MavCmdAck byte
-
 const (
 	// Command / mission item is ok.
-	MAV_CMD_ACK_OK MavCmdAck = iota
+	MAV_CMD_ACK_OK = iota
 	// Generic error message if none of the other reasons fails or if no detailed error reporting is implemented.
-	MAV_CMD_ACK_ERR_FAIL MavCmdAck
+	MAV_CMD_ACK_ERR_FAIL
 	// The system is refusing to accept this command from this source / communication partner.
-	MAV_CMD_ACK_ERR_ACCESS_DENIED MavCmdAck
+	MAV_CMD_ACK_ERR_ACCESS_DENIED
 	// Command or mission item is not supported, other commands would be accepted.
-	MAV_CMD_ACK_ERR_NOT_SUPPORTED MavCmdAck
+	MAV_CMD_ACK_ERR_NOT_SUPPORTED
 	// The coordinate frame of this command / mission item is not supported.
-	MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED MavCmdAck
+	MAV_CMD_ACK_ERR_COORDINATE_FRAME_NOT_SUPPORTED
 	// The coordinate frame of this command is ok, but he coordinate values exceed the safety limits of this system. This is a generic error, please use the more specific error messages below if possible.
-	MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE MavCmdAck
+	MAV_CMD_ACK_ERR_COORDINATES_OUT_OF_RANGE
 	// The X or latitude value is out of range.
-	MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE MavCmdAck
+	MAV_CMD_ACK_ERR_X_LAT_OUT_OF_RANGE
 	// The Y or longitude value is out of range.
-	MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE MavCmdAck
+	MAV_CMD_ACK_ERR_Y_LON_OUT_OF_RANGE
 	// The Z or altitude value is out of range.
-	MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE MavCmdAck
+	MAV_CMD_ACK_ERR_Z_ALT_OUT_OF_RANGE
 )
 
 // Specifies the datatype of a MAVLink parameter.
-type MavParamType byte
-
 const (
 	// 8-bit unsigned integer
-	MAV_PARAM_TYPE_UINT8 MavParamType = 1
+	MAV_PARAM_TYPE_UINT8 = 1
 	// 8-bit signed integer
-	MAV_PARAM_TYPE_INT8 MavParamType = 2
+	MAV_PARAM_TYPE_INT8 = 2
 	// 16-bit unsigned integer
-	MAV_PARAM_TYPE_UINT16 MavParamType = 3
+	MAV_PARAM_TYPE_UINT16 = 3
 	// 16-bit signed integer
-	MAV_PARAM_TYPE_INT16 MavParamType = 4
+	MAV_PARAM_TYPE_INT16 = 4
 	// 32-bit unsigned integer
-	MAV_PARAM_TYPE_UINT32 MavParamType = 5
+	MAV_PARAM_TYPE_UINT32 = 5
 	// 32-bit signed integer
-	MAV_PARAM_TYPE_INT32 MavParamType = 6
+	MAV_PARAM_TYPE_INT32 = 6
 	// 64-bit unsigned integer
-	MAV_PARAM_TYPE_UINT64 MavParamType = 7
+	MAV_PARAM_TYPE_UINT64 = 7
 	// 64-bit signed integer
-	MAV_PARAM_TYPE_INT64 MavParamType = 8
+	MAV_PARAM_TYPE_INT64 = 8
 	// 32-bit floating-point
-	MAV_PARAM_TYPE_REAL32 MavParamType = 9
+	MAV_PARAM_TYPE_REAL32 = 9
 	// 64-bit floating-point
-	MAV_PARAM_TYPE_REAL64 MavParamType = 10
+	MAV_PARAM_TYPE_REAL64 = 10
 )
 
 // result from a mavlink command
-type MavResult byte
-
 const (
 	// Command ACCEPTED and EXECUTED
-	MAV_RESULT_ACCEPTED MavResult = 0
+	MAV_RESULT_ACCEPTED = 0
 	// Command TEMPORARY REJECTED/DENIED
-	MAV_RESULT_TEMPORARILY_REJECTED MavResult = 1
+	MAV_RESULT_TEMPORARILY_REJECTED = 1
 	// Command PERMANENTLY DENIED
-	MAV_RESULT_DENIED MavResult = 2
+	MAV_RESULT_DENIED = 2
 	// Command UNKNOWN/UNSUPPORTED
-	MAV_RESULT_UNSUPPORTED MavResult = 3
+	MAV_RESULT_UNSUPPORTED = 3
 	// Command executed, but failed
-	MAV_RESULT_FAILED MavResult = 4
+	MAV_RESULT_FAILED = 4
 )
 
 // result in a mavlink mission ack
-type MavMissionResult byte
-
 const (
 	// mission accepted OK
-	MAV_MISSION_ACCEPTED MavMissionResult = 0
+	MAV_MISSION_ACCEPTED = 0
 	// generic error / not accepting mission commands at all right now
-	MAV_MISSION_ERROR MavMissionResult = 1
+	MAV_MISSION_ERROR = 1
 	// coordinate frame is not supported
-	MAV_MISSION_UNSUPPORTED_FRAME MavMissionResult = 2
+	MAV_MISSION_UNSUPPORTED_FRAME = 2
 	// command is not supported
-	MAV_MISSION_UNSUPPORTED MavMissionResult = 3
+	MAV_MISSION_UNSUPPORTED = 3
 	// mission item exceeds storage space
-	MAV_MISSION_NO_SPACE MavMissionResult = 4
+	MAV_MISSION_NO_SPACE = 4
 	// one of the parameters has an invalid value
-	MAV_MISSION_INVALID MavMissionResult = 5
+	MAV_MISSION_INVALID = 5
 	// param1 has an invalid value
-	MAV_MISSION_INVALID_PARAM1 MavMissionResult = 6
+	MAV_MISSION_INVALID_PARAM1 = 6
 	// param2 has an invalid value
-	MAV_MISSION_INVALID_PARAM2 MavMissionResult = 7
+	MAV_MISSION_INVALID_PARAM2 = 7
 	// param3 has an invalid value
-	MAV_MISSION_INVALID_PARAM3 MavMissionResult = 8
+	MAV_MISSION_INVALID_PARAM3 = 8
 	// param4 has an invalid value
-	MAV_MISSION_INVALID_PARAM4 MavMissionResult = 9
+	MAV_MISSION_INVALID_PARAM4 = 9
 	// x/param5 has an invalid value
-	MAV_MISSION_INVALID_PARAM5_X MavMissionResult = 10
+	MAV_MISSION_INVALID_PARAM5_X = 10
 	// y/param6 has an invalid value
-	MAV_MISSION_INVALID_PARAM6_Y MavMissionResult = 11
+	MAV_MISSION_INVALID_PARAM6_Y = 11
 	// param7 has an invalid value
-	MAV_MISSION_INVALID_PARAM7 MavMissionResult = 12
+	MAV_MISSION_INVALID_PARAM7 = 12
 	// received waypoint out of sequence
-	MAV_MISSION_INVALID_SEQUENCE MavMissionResult = 13
+	MAV_MISSION_INVALID_SEQUENCE = 13
 	// not accepting any mission commands from this communication partner
-	MAV_MISSION_DENIED MavMissionResult = 14
+	MAV_MISSION_DENIED = 14
 )
 
 // Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.
-type MavSeverity byte
-
 const (
 	// System is unusable. This is a "panic" condition.
-	MAV_SEVERITY_EMERGENCY MavSeverity = 0
+	MAV_SEVERITY_EMERGENCY = 0
 	// Action should be taken immediately. Indicates error in non-critical systems.
-	MAV_SEVERITY_ALERT MavSeverity = 1
+	MAV_SEVERITY_ALERT = 1
 	// Action must be taken immediately. Indicates failure in a primary system.
-	MAV_SEVERITY_CRITICAL MavSeverity = 2
+	MAV_SEVERITY_CRITICAL = 2
 	// Indicates an error in secondary/redundant systems.
-	MAV_SEVERITY_ERROR MavSeverity = 3
+	MAV_SEVERITY_ERROR = 3
 	// Indicates about a possible future error if this is not resolved within a given timeframe. Example would be a low battery warning.
-	MAV_SEVERITY_WARNING MavSeverity = 4
+	MAV_SEVERITY_WARNING = 4
 	// An unusual event has occured, though not an error condition. This should be investigated for the root cause.
-	MAV_SEVERITY_NOTICE MavSeverity = 5
+	MAV_SEVERITY_NOTICE = 5
 	// Normal operational messages. Useful for logging. No action is required for these messages.
-	MAV_SEVERITY_INFO MavSeverity = 6
+	MAV_SEVERITY_INFO = 6
 	// Useful non-operational messages that can assist in debugging. These should not occur during normal operation.
-	MAV_SEVERITY_DEBUG MavSeverity = 7
+	MAV_SEVERITY_DEBUG = 7
 )
 
 
