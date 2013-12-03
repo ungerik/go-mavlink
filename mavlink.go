@@ -81,10 +81,10 @@ func Receive(reader io.Reader) (msg Message, systemID, componentID uint8, err er
 
 	// Create a tee to write all reads into checksum
 	var checksum checksum
-	teeReader := io.TeeReader(reader, &checksum)
+	checksummedReader := io.TeeReader(reader, &checksum)
 
 	var header header
-	err = binary.Read(teeReader, binary.LittleEndian, &header)
+	err = binary.Read(checksummedReader, binary.LittleEndian, &header)
 	if err != nil {
 		return nil, 0, 0, err
 	}
@@ -100,7 +100,7 @@ func Receive(reader io.Reader) (msg Message, systemID, componentID uint8, err er
 		return nil, 0, 0, fmt.Errorf("Message ID and size don't match")
 	}
 
-	err = binary.Read(teeReader, binary.LittleEndian, msg)
+	err = binary.Read(checksummedReader, binary.LittleEndian, msg)
 	if err != nil {
 		return nil, 0, 0, err
 	}
