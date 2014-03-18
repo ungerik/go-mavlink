@@ -6,15 +6,15 @@ import (
 )
 
 var charParserFactory = map[parserState]parserFunc{
- 	mavlink_parse_state_idle:	parseFramestart,
-	mavlink_parse_state_got_stx:	parsePayloadLength,
-	mavlink_parse_state_got_length:	parsePacketSeq,
-	mavlink_parse_state_got_seq:	parseSysID,
-	mavlink_parse_state_got_sysid:	parseCompID,
-	mavlink_parse_state_got_compid:	parseMsgID,
-	mavlink_parse_state_got_msgid:	parsePayload,
-	mavlink_parse_state_got_payload:parseCrc1,
-	mavlink_parse_state_got_crc1:	parseCrc2,
+	mavlink_parse_state_idle:        parseFramestart,
+	mavlink_parse_state_got_stx:     parsePayloadLength,
+	mavlink_parse_state_got_length:  parsePacketSeq,
+	mavlink_parse_state_got_seq:     parseSysID,
+	mavlink_parse_state_got_sysid:   parseCompID,
+	mavlink_parse_state_got_compid:  parseMsgID,
+	mavlink_parse_state_got_msgid:   parsePayload,
+	mavlink_parse_state_got_payload: parseCrc1,
+	mavlink_parse_state_got_crc1:    parseCrc2,
 }
 
 type parserFunc func(byte, *MavPacketInternal) (parserState, error)
@@ -44,7 +44,7 @@ func getPacketSeqGenerator() PacketSequenceFunc {
  * Parser
  */
 
-func	parseFramestart(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parseFramestart(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	if c == frameStart {
 		pInternal.rawBuffer.Reset()
 		pInternal.rawBuffer.WriteByte(c)
@@ -55,7 +55,7 @@ func	parseFramestart(c byte, pInternal *MavPacketInternal) (parserState, error) 
 	return mavlink_parse_state_idle, ErrInvalidStartframe(c)
 }
 
-func	parsePayloadLength(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parsePayloadLength(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	if c >= 0 && c <= mav_max_payload_len {
 		pInternal.rawBuffer.WriteByte(c)
 		pInternal.packet.Header.PayloadLength = c
@@ -65,28 +65,28 @@ func	parsePayloadLength(c byte, pInternal *MavPacketInternal) (parserState, erro
 	return mavlink_parse_state_idle, ErrInvalidPayloadLength(c)
 }
 
-func	parsePacketSeq(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parsePacketSeq(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 	pInternal.packet.Header.PacketSequence = c
 	pInternal.packet.crcAccumulate(c)
 	return mavlink_parse_state_got_seq, nil
 }
 
-func	parseSysID(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parseSysID(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 	pInternal.packet.Header.SystemID = c
 	pInternal.packet.crcAccumulate(c)
 	return mavlink_parse_state_got_sysid, nil
 }
 
-func	parseCompID(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parseCompID(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 	pInternal.packet.Header.ComponentID = c
 	pInternal.packet.crcAccumulate(c)
 	return mavlink_parse_state_got_compid, nil
 }
 
-func	parseMsgID(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parseMsgID(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 	pInternal.packet.Header.MessageID = c
 	pInternal.packet.crcAccumulate(c)
@@ -106,16 +106,16 @@ func	parseMsgID(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	return mavlink_parse_state_idle, ErrUnknownMessageID(c)
 }
 
-func	parsePayload(c byte, pInternal *MavPacketInternal) (parserState, error) {
+func parsePayload(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 	pInternal.packet.crcAccumulate(c)
 
-	if pInternal.rawBuffer.Len() - int(pInternal.packet.Header.Size()) == int(pInternal.packet.Msg.Size()) {
+	if pInternal.rawBuffer.Len()-int(pInternal.packet.Header.Size()) == int(pInternal.packet.Msg.Size()) {
 		buf := bytes.NewBuffer(pInternal.rawBuffer.Bytes()[pInternal.packet.Header.Size():])
 		if err := binary.Read(buf, binary.LittleEndian, pInternal.packet.Msg); err != nil {
 			return mavlink_parse_state_got_msgid, err
 		}
-		return  mavlink_parse_state_got_payload, nil
+		return mavlink_parse_state_got_payload, nil
 	}
 	return mavlink_parse_state_got_msgid, nil
 }
@@ -124,9 +124,9 @@ func parseCrc1(c byte, pInternal *MavPacketInternal) (parserState, error) {
 	pInternal.rawBuffer.WriteByte(c)
 
 	if mavlink_crc_extra_enabled {
-	 	pInternal.packet.crcAccumulate(messageCrcs[pInternal.packet.Msg.ID()])
+		pInternal.packet.crcAccumulate(messageCrcs[pInternal.packet.Msg.ID()])
 	}
-	if c == uint8(pInternal.packet.Checksum & 0xFF) {
+	if c == uint8(pInternal.packet.Checksum&0xFF) {
 		return mavlink_parse_state_got_crc1, nil
 	} else if c == frameStart {
 		return parseFramestart(c, pInternal)
