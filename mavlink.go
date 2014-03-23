@@ -1,60 +1,34 @@
 package mavlink
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
-	// "io/ioutil"
+)
+
+type parserState uint8
+type ParseCharFunc func(byte) (packet *MavPacket, err error)
+
+const (
+	mavlink_crc_extra_enabled       = true
+	frameStart                      = uint8(0xFE)
+	mavlink_parse_state_uninit      = 0
+	mavlink_parse_state_idle        = 1
+	mavlink_parse_state_got_stx     = 2
+	mavlink_parse_state_got_length  = 3
+	mavlink_parse_state_got_seq     = 4
+	mavlink_parse_state_got_sysid   = 5
+	mavlink_parse_state_got_compid  = 6
+	mavlink_parse_state_got_msgid   = 7
+	mavlink_parse_state_got_payload = 8
+	mavlink_parse_state_got_crc1    = 9
+	mavlink_parse_state_got_packet  = 10
 )
 
 var (
-	frameStart      = []byte{'\xfe'}
-	sequenceCounter uint8
+	packetSeqGenerator = getPacketSeqGenerator()
 )
-
-type checksum struct {
-	writer io.Writer
-	sum    uint16
-}
-
-func (self *checksum) Write(data []byte) (n int, err error) {
-	// todo calc sum
-
-	if self.writer != nil {
-		return self.writer.Write(data)
-	} else {
-		return len(data), nil
-	}
-}
-
-func Send(writer io.Writer, systemID, componentID uint8, message Message) error {
-	_, err := writer.Write(frameStart)
-	if err != nil {
-		return err
-	}
-	checksum := checksum{writer: writer}
-
-	header := []byte{message.Size(), sequenceCounter, systemID, componentID, message.ID()}
-	_, err = checksum.Write(header)
-	if err != nil {
-		return err
-	}
-
-	err = binary.Write(&checksum, binary.LittleEndian, message)
-	if err != nil {
-		return err
-	}
-
-	return binary.Write(writer, binary.LittleEndian, checksum.sum)
-}
-
-type header struct {
-	PayloadLength  uint8
-	PacketSequence uint8
-	SystemID       uint8
-	ComponentID    uint8
-	MessageID      uint8
-}
 
 type ErrUnknownMessageID uint8
 
@@ -68,51 +42,80 @@ func (self ErrInvalidChecksum) Error() string {
 	return fmt.Sprintf("Invalid checksum %d", self)
 }
 
-func Receive(reader io.Reader) (msg Message, systemID, componentID uint8, err error) {
-	// Read first byte and check if it is 0xfe
-	var start [1]byte
-	_, err = reader.Read(start[:])
+type ErrInvalidStartframe uint8
+
+func (self ErrInvalidStartframe) Error() string {
+	return fmt.Sprintf("Invalid start of frame %d", self)
+}
+
+type ErrInvalidPayloadLength uint8
+
+func (self ErrInvalidPayloadLength) Error() string {
+	return fmt.Sprintf("Message ID and PayloadLength (%d) don't match", self)
+}
+
+// Create a MavPacket, and write it on the writer
+func Send(writer io.Writer, systemID, componentID uint8, message Message) error {
+	packet, err := CreatePacket(systemID, componentID, message)
 	if err != nil {
-		return nil, 0, 0, err
-	}
-	if start[0] != 0xfe {
-		return nil, 0, 0, fmt.Errorf("Invalid start of frame %x", start)
+		return err
 	}
 
-	// Create a tee to write all reads into checksum
-	var checksum checksum
-	checksummedReader := io.TeeReader(reader, &checksum)
+	return binary.Write(writer, binary.LittleEndian, packet.Bytes())
+}
 
-	var header header
-	err = binary.Read(checksummedReader, binary.LittleEndian, &header)
-	if err != nil {
-		return nil, 0, 0, err
-	}
-	if int(header.MessageID) >= len(messageFactory) {
-		// Unknow message type, read into dummy until end of message
-		dummy := make([]byte, header.PayloadLength+2)
-		reader.Read(dummy)
-		return nil, 0, 0, ErrUnknownMessageID(header.MessageID)
-	}
-
-	msg = messageFactory[header.MessageID]()
-	if header.PayloadLength != msg.Size() {
-		return nil, 0, 0, fmt.Errorf("Message ID and size don't match")
+// Create a MavPacket then compute the checksum.
+// TODO : compute the checksum on the go
+func CreatePacket(systemID, componentID uint8, message Message) (*MavPacket, error) {
+	packet := &MavPacket{
+		Header: MavHeader{
+			FrameStart:     frameStart,
+			PayloadLength:  message.Size(),
+			PacketSequence: packetSeqGenerator(),
+			SystemID:       systemID,
+			ComponentID:    componentID,
+			MessageID:      message.ID(),
+		},
+		Msg: message,
 	}
 
-	err = binary.Read(checksummedReader, binary.LittleEndian, msg)
-	if err != nil {
-		return nil, 0, 0, err
-	}
+	packet.computeChecksum()
+	return packet, nil // todo : check errors...
+}
 
+func checkChecksum(buf *bytes.Buffer, packet *MavPacket) error {
 	var streamChecksum uint16
-	err = binary.Read(reader, binary.LittleEndian, &streamChecksum)
-	if err != nil {
-		return nil, 0, 0, err
-	}
-	if streamChecksum != checksum.sum {
-		return nil, 0, 0, ErrInvalidChecksum(streamChecksum)
-	}
 
-	return msg, header.SystemID, header.ComponentID, nil
+	err := binary.Read(buf, binary.LittleEndian, &streamChecksum)
+	if err != nil {
+		return err
+	}
+	if streamChecksum != packet.computeChecksum() {
+		return ErrInvalidChecksum(streamChecksum)
+	}
+	return nil
+}
+
+func GetMavParser() ParseCharFunc {
+	var step parserState
+	var pInternal *MavPacketInternal = new(MavPacketInternal)
+
+	pInternal.packet = new(MavPacket)
+	step = mavlink_parse_state_idle
+
+	return func(c byte) (_ *MavPacket, err error) {
+		if charParser, ok := charParserFactory[step]; ok {
+			step, err = charParser(c, pInternal)
+			if err != nil {
+				pInternal.rawBuffer.Reset()
+				return nil, err
+			}
+		}
+		if step == mavlink_parse_state_got_packet {
+			pInternal.rawBuffer.Reset()
+			step = mavlink_parse_state_idle
+			return pInternal.packet, nil
+		}
+		return nil, nil
+	}
 }
