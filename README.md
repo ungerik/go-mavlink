@@ -2,6 +2,9 @@
 
 
 go impletation of the MAVLink protocol.
+```text
+MAVLink or Micro Air Vehicle Link is a protocol for communicating with small unmanned vehicle. It's designed as a header-only message marshaling library. MAVLink was first released early 2009 by Lorenz Meier under LGPL license.
+```
 This implementation is mainly inspired by the C version (see [on GitHub](https://github.com/mavlink/qgroundcontrol/tree/master/libs/mavlink/include/mavlink/v1.0)).
 Only tested under Unix
 
