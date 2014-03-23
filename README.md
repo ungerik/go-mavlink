@@ -85,7 +85,6 @@ import (
        "log"
 )
 
-
 func main() {
 	port := &serial.Config{Name: "/dev/ttyUSB0", Baud: 57600}
         s, _ := serial.OpenPort(port) // check errors
@@ -93,10 +92,10 @@ func main() {
 	message := new(mav.RequestDataStream)
         message.ReqMessageRate = 20
 
-	err := mav.Send(s, 1, 200, message)
+        err := mav.Send(s, 1, 200, message)
         if err != nil {
-    	log.Fatalf("Error while sending the packet:", err)
-    }
+		log.Fatalf("Error while sending the packet:", err)
+	}
 }
 ```
 

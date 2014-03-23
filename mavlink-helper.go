@@ -48,6 +48,7 @@ func parseFramestart(c byte, pInternal *MavPacketInternal) (parserState, error) 
 	if c == frameStart {
 		pInternal.rawBuffer.Reset()
 		pInternal.rawBuffer.WriteByte(c)
+		pInternal.packet = new(MavPacket)
 		pInternal.packet.crcInit()
 		pInternal.packet.Header.FrameStart = frameStart
 		return mavlink_parse_state_got_stx, nil
